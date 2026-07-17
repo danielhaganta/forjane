@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Untuk Jane</title>
+
+  <!-- PWA Support -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#E8B4B8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Untuk Jane">
+  <link rel="apple-touch-icon" href="icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Quicksand:wght@400;500;600;700&family=Caveat:wght@500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --cream: #FBF3EF;
+      --card: #FFFCFB;
+      --rose: #E8B4B8;
+      --rose-soft: #F3D3D6;
+      --rose-deep: #C97B84;
+      --plum: #4A3B3D;
+      --plum-soft: #8A7476;
+      --gold: #D9AF8C;
+      --sage: #A9BFA8;
+      --night: #7C6E9C;
+      --night-soft: #EAE3F5;
+
+      /* Dark mode vars */
+      --dark-bg: #221C24;
+      --dark-card: rgba(43, 36, 48, 0.65);
+      --dark-text: #FBF3EF;
+      --dark-text-soft: #C2B6C6;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--cream);
+      font-family: 'Quicksand', sans-serif;
+      color: var(--plum);
+      overflow-x: hidden;
+      transition: background 1s ease, color 1s ease;
+      position: relative;
+    }
+
+    /* Background Gradient */
+    .bg-blobs {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 0;
+      pointer-events: none;
+      transition: opacity 1s ease;
+    }
+
+    .bg-pagi {
+      background:
+        radial-gradient(circle at 15% 5%, rgba(232, 180, 184, 0.4), transparent 45%),
+        radial-gradient(circle at 90% 10%, rgba(217, 175, 140, 0.3), transparent 50%),
+        radial-gradient(circle at 50% 100%, rgba(169, 191, 168, 0.25), transparent 55%);
+      opacity: 1;
+    }
+
+    .bg-malam {
+      background:
+        radial-gradient(circle at 20% 10%, rgba(124, 110, 156, 0.35), transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(74, 59, 61, 0.5), transparent 55%),
+        radial-gradient(circle at 50% 90%, rgba(138, 116, 118, 0.2), transparent 55%);
+      opacity: 0;
+    }
+
+    body.mode-malam {
+      background: var(--dark-bg);
+      color: var(--dark-text);
+    }
+
+    body.mode-malam .bg-pagi {
+      opacity: 0;
+    }
+
+    body.mode-malam .bg-malam {
+      opacity: 1;
+    }
+
+    .petal {
+      position: fixed;
+      top: -40px;
+      opacity: 0.6;
+      animation: fall linear infinite;
+      pointer-events: none;
+      user-select: none;
+      z-index: 1;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(0) translateX(0) rotate(0deg) scale(0.8);
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 0.8;
+        transform: scale(1);
+      }
+
+      90% {
+        opacity: 0.5;
+      }
+
+      100% {
+        transform: translateY(110vh) translateX(50px) rotate(360deg) scale(0.8);
+        opacity: 0;
+      }
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 2;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 60px 24px 90px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .main-cross {
+      width: 44px;
+      height: 44px;
+      margin: 0 auto 20px;
+      color: var(--rose-deep);
+      filter: drop-shadow(0 0 12px rgba(201, 123, 132, 0.4));
+      transition: all 1s ease;
+      animation: pulseGlow 3s infinite alternate;
+    }
+
+    body.mode-malam .main-cross {
+      color: var(--night-soft);
+      filter: drop-shadow(0 0 12px rgba(234, 227, 245, 0.5));
+    }
+
+    @keyframes pulseGlow {
+      0% {
+        transform: translateY(0px) scale(0.95);
+        opacity: 0.8;
+      }
+
+      100% {
+        transform: translateY(-4px) scale(1.05);
+        opacity: 1;
+      }
+    }
+
+    .eyebrow {
+      font-family: 'Caveat', cursive;
+      font-size: 42px;
+      color: var(--rose-deep);
+      letter-spacing: 1px;
+      margin-bottom: 40px;
+      transition: color 1s ease;
+    }
+
+    body.mode-malam .eyebrow {
+      color: var(--night-soft);
+    }
+
+    /* Toggle Buttons 3D Glassmorphism */
+    .toggle-wrapper {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 60px;
+    }
+
+    .toggle-btn {
+      background: rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      padding: 16px 44px;
+      border-radius: 999px;
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 700;
+      font-size: 17px;
+      color: var(--plum-soft);
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      backdrop-filter: blur(12px);
+      box-shadow:
+        0 8px 24px -6px rgba(201, 123, 132, 0.15),
+        inset 0 -2px 6px rgba(201, 123, 132, 0.05);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .toggle-btn:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow:
+        0 14px 32px -6px rgba(201, 123, 132, 0.25),
+        inset 0 -2px 6px rgba(201, 123, 132, 0.1);
+    }
+
+    .toggle-btn.active-pagi {
+      background: linear-gradient(135deg, #FFF0F2 0%, #F3D3D6 100%);
+      color: var(--plum);
+      border-color: #fff;
+      box-shadow:
+        0 16px 36px rgba(232, 180, 184, 0.5),
+        inset 0 2px 6px rgba(255, 255, 255, 1);
+    }
+
+    .toggle-btn.active-malam {
+      background: linear-gradient(135deg, #7C6E9C 0%, #4A3B3D 100%);
+      color: #fff;
+      border-color: rgba(124, 110, 156, 0.8);
+      box-shadow:
+        0 16px 36px rgba(124, 110, 156, 0.6),
+        inset 0 2px 6px rgba(255, 255, 255, 0.25);
+    }
+
+    body.mode-malam .toggle-btn {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--dark-text-soft);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    body.mode-malam .toggle-btn.active-malam {
+      background: linear-gradient(135deg, #8C7DAF 0%, #59484A 100%);
+      color: #fff;
+    }
+
+    .toggle-btn.active-mazmur {
+      background: linear-gradient(135deg, #F9F1E6 0%, #D9AF8C 100%);
+      color: var(--plum);
+      border-color: #fff;
+      box-shadow:
+        0 16px 36px rgba(217, 175, 140, 0.4),
+        inset 0 2px 6px rgba(255, 255, 255, 1);
+    }
+
+    body.mode-malam .toggle-btn.active-mazmur {
+      background: linear-gradient(135deg, #5C4F44 0%, #3B2E24 100%);
+      color: #FBF3EF;
+      border-color: rgba(217, 175, 140, 0.5);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
+    }
+
+    .day {
+      margin-bottom: 72px;
+    }
+
+    .day-date {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .day-date .d-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 28px;
+      text-transform: capitalize;
+      color: var(--plum);
+      transition: color 1s ease;
+      display: inline-block;
+      padding: 8px 32px;
+      border-bottom: 1px solid rgba(201, 123, 132, 0.3);
+    }
+
+    body.mode-malam .day-date .d-title {
+      color: var(--dark-text);
+      border-bottom: 1px solid rgba(234, 227, 245, 0.2);
+    }
+
+    .verse-group {
+      display: grid;
+      gap: 32px;
+      margin-bottom: 44px;
+    }
+
+    /* Enhanced Card Design */
+    .verse-card {
+      background: linear-gradient(135deg, #FFFFFF 0%, #FFF0F4 100%);
+      border-radius: 36px;
+      padding: 56px 48px;
+      box-shadow:
+        0 32px 64px -16px rgba(201, 123, 132, 0.25),
+        inset 0 0 0 6px rgba(255, 255, 255, 0.8),
+        inset 0 0 0 8px rgba(232, 180, 184, 0.4);
+      border: 1px solid rgba(232, 180, 184, 0.25);
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(40px) scale(0.95);
+      transition: all 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+      text-align: center;
+    }
+
+    body.mode-malam .verse-card {
+      background: linear-gradient(135deg, rgba(62, 51, 68, 0.8) 0%, rgba(38, 30, 42, 0.95) 100%);
+      box-shadow:
+        0 32px 64px -16px rgba(0, 0, 0, 0.6),
+        inset 0 0 0 6px rgba(43, 36, 48, 0.5),
+        inset 0 0 0 8px rgba(124, 110, 156, 0.4);
+      border: 1px solid rgba(124, 110, 156, 0.3);
+      backdrop-filter: blur(16px);
+    }
+
+    .verse-card.in {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    /* Inner light glow */
+    .verse-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.7), transparent 60%);
+      pointer-events: none;
+      z-index: 1;
+      border-radius: 36px;
+    }
+
+    body.mode-malam .verse-card::before {
+      background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.08), transparent 60%);
+    }
+
+    /* Top gradient bar */
+    .verse-card::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 8px;
+      z-index: 3;
+    }
+
+    .verse-card.pagi::after {
+      background: linear-gradient(90deg, var(--rose), var(--gold));
+    }
+
+    .verse-card.malam::after {
+      background: linear-gradient(90deg, var(--night), var(--rose-deep));
+    }
+
+    /* Decorative Cross Background */
+    .bg-cross {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 160px;
+      height: 180px;
+      opacity: 0.04;
+      color: var(--rose-deep);
+      z-index: 0;
+      pointer-events: none;
+      transition: all 1s ease;
+    }
+
+    body.mode-malam .bg-cross {
+      color: var(--night-soft);
+      opacity: 0.05;
+    }
+
+    .content-wrapper {
+      position: relative;
+      z-index: 2;
+    }
+
+    .quote-mark {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 64px;
+      line-height: 1;
+      margin-bottom: 0px;
+      transition: color 1s ease;
+    }
+
+    .verse-card.pagi .quote-mark {
+      color: var(--rose);
+    }
+
+    .verse-card.malam .quote-mark {
+      color: var(--night-soft);
+    }
+
+    .verse-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 30px;
+      line-height: 1.6;
+      color: var(--plum);
+      transition: color 1s ease;
+      margin: 0 auto;
+      max-width: 90%;
+    }
+
+    body.mode-malam .verse-text {
+      color: var(--dark-text);
+    }
+
+    .verse-text p {
+      margin: 0 0 24px 0;
+    }
+
+    .verse-text p:last-child {
+      margin: 0;
+    }
+
+    .verse-text sup {
+      font-family: 'Quicksand', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--rose-deep);
+      margin-right: 6px;
+    }
+
+    body.mode-malam .verse-text sup {
+      color: var(--rose-soft);
+    }
+
+    .verse-ref {
+      display: inline-block;
+      margin-top: 32px;
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 1.5px;
+      padding: 10px 24px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      transition: all 1s ease;
+    }
+
+    .verse-card.pagi .verse-ref {
+      color: var(--rose-deep);
+      background: var(--rose-soft);
+      box-shadow: 0 4px 12px rgba(243, 211, 214, 0.6);
+    }
+
+    .verse-card.malam .verse-ref {
+      color: var(--night);
+      background: rgba(124, 110, 156, 0.3);
+      box-shadow: 0 4px 12px rgba(124, 110, 156, 0.2);
+    }
+
+    body.mode-malam .verse-card.pagi .verse-ref {
+      background: rgba(232, 180, 184, 0.2);
+      color: var(--rose-soft);
+    }
+
+    body.mode-malam .verse-card.malam .verse-ref {
+      background: rgba(124, 110, 156, 0.5);
+      color: var(--night-soft);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 80px;
+      font-size: 15px;
+      color: var(--plum-soft);
+      transition: color 1s ease;
+    }
+
+    body.mode-malam footer {
+      color: var(--dark-text-soft);
+    }
+
+    footer .heart {
+      color: var(--rose-deep);
+      display: inline-block;
+      animation: heartbeat 2s infinite;
+    }
+
+    body.mode-malam footer .heart {
+      color: var(--night-soft);
+    }
+
+    @keyframes heartbeat {
+      0% {
+        transform: scale(1);
+      }
+
+      10% {
+        transform: scale(1.2);
+      }
+
+      20% {
+        transform: scale(1);
+      }
+
+      30% {
+        transform: scale(1.2);
+      }
+
+      40% {
+        transform: scale(1);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    @media (max-width: 520px) {
+      .verse-text {
+        font-size: 26px;
+      }
+
+      .verse-card {
+        padding: 48px 32px;
+        border-radius: 28px;
+      }
+
+      .toggle-btn {
+        padding: 14px 28px;
+        font-size: 15px;
+      }
+
+      .eyebrow {
+        font-size: 36px;
+      }
+
+      .main-cross {
+        width: 36px;
+        height: 36px;
+      }
+    }
+
+    /* Click Sparkle Effect */
+    .click-sparkle {
+      position: fixed;
+      pointer-events: none;
+      font-size: 20px;
+      z-index: 9999;
+      user-select: none;
+      animation: floatSparkle 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+
+    @keyframes floatSparkle {
+      0% {
+        transform: translate(-50%, -50%) scale(0.5) rotate(0deg);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translate(-50%, -60px) scale(1.5) rotate(45deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="bg-blobs bg-pagi"></div>
+  <div class="bg-blobs bg-malam"></div>
+
+  <div class="wrap">
+    <header>
+      <div class="main-cross">
+        <!-- Beautiful glowing cross -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M12 3v18M8 8h8" />
+          <path d="M12 3 c-1-2-3-2-3 0s1 2 3 2s3-2 3 0s-2 2-3 2" opacity="0.4" />
+        </svg>
+      </div>
+      <div class="eyebrow">untuk Jane,</div>
+
+      <div class="toggle-wrapper">
+        <button id="btnPagi" class="toggle-btn active-pagi" onclick="setTab('pagi')">
+          ☀️ Pagi
+        </button>
+        <button id="btnMalam" class="toggle-btn" onclick="setTab('malam')">
+          🌙 Malam
+        </button>
+        <button id="btnMazmur" class="toggle-btn" onclick="setTab('mazmur')">
+          📖 Bacaan Tetap
+        </button>
+      </div>
+    </header>
+
+    <div id="daysContainer"></div>
+
+    <footer>
+      So proud of you Jane
+    </footer>
+  </div>
+
+  <script>
+    /* =========================================================
+       ISI AYAT DI SINI
+       Format tetap sama, pagi 2 ayat, malam 2 ayat.
+    ========================================================= */
+    const DAYS = [
+      {
+        date: "2026-07-17",
+        pagi: [
+          {
+            verse: "Kita tahu sekarang, bahwa Allah turut bekerja dalam segala sesuatu untuk mendatangkan kebaikan bagi mereka yang mengasihi Dia, yaitu bagi mereka yang terpanggil sesuai dengan rencana Allah.",
+            ref: "Roma 8:28"
+          },
+          {
+            verse: "Segala perkara dapat kutanggung di dalam Dia yang memberi kekuatan kepadaku.",
+            ref: "Filipi 4:13"
+          }
+        ],
+        malam: [
+          {
+            verse: "Damai sejahtera kutinggalkan bagimu. Damai sejahtera-Ku kuberikan kepadamu, dan Aku tidak memberikannya kepadamu seperti yang diberikan oleh dunia. Janganlah gelisah dan janganlah takut.",
+            ref: "Yohanes 14:27"
+          },
+          {
+            verse: "Serahkanlah segala kekhawatiranmu kepada-Nya, sebab Ia memelihara kamu.",
+            ref: "1 Petrus 5:7"
+          }
+        ]
+      }
+    ];
+
+    const MONTHS = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+    const DOW = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+
+    function fmtDate(dateStr) {
+      const d = new Date(dateStr + "T00:00:00");
+      return `${DOW[d.getDay()]}, ${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+    }
+
+    function verseCardHTML(entry, kind) {
+      return `
+    <div class="verse-card ${kind}">
+      <!-- Beautiful subtle cross watermark in card background -->
+      <svg class="bg-cross" viewBox="0 0 100 120" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="50" y1="10" x2="50" y2="110"/>
+        <line x1="20" y1="40" x2="80" y2="40"/>
+        <path d="M50 80 Q 30 70 35 50 Q 45 40 50 60" />
+        <path d="M50 60 Q 70 50 65 30 Q 55 20 50 40" />
+      </svg>
+      
+      <div class="content-wrapper">
+        <div class="quote-mark">&ldquo;</div>
+        <div class="verse-text">${entry.verse}</div>
+        <span class="verse-ref">${entry.ref}</span>
+      </div>
+    </div>
+  `;
+    }
+
+    const MAZMUR_91 = [
+      {
+        verse: `
+      <div style='font-size:24px; line-height:1.75; text-align:left;'>
+        <p><sup>1</sup> Orang yang duduk dalam lindungan Yang Mahatinggi dan bermalam dalam naungan Yang Mahakuasa <sup>2</sup> akan berkata kepada TUHAN: "Tempat perlindunganku dan kubu pertahananku, Allahku, yang kupercayai."</p>
+        <p><sup>3</sup> Sungguh, Dialah yang akan melepaskan engkau dari jerat penangkap burung, dari penyakit sampar yang busuk. <sup>4</sup> Dengan kepak-Nya Ia akan menudungi engkau, di bawah sayap-Nya engkau akan berlindung, kesetiaan-Nya adalah perisai dan pagar tembok.</p>
+        <p><sup>5</sup> Engkau tak usah takut terhadap kedahsyatan malam, terhadap panah yang terbang di waktu siang, <sup>6</sup> terhadap penyakit sampar yang berjalan di dalam gelap, terhadap penyakit menular yang mengamuk di waktu petang.</p>
+        <p><sup>7</sup> Walau seribu orang rebah di sisimu, dan sepuluh ribu di sebelah kananmu, tetapi itu tidak akan menimpamu. <sup>8</sup> Engkau hanya menontonnya dengan matamu sendiri dan melihat pembalasan terhadap orang-orang fasik.</p>
+        <p><sup>9</sup> Sebab TUHAN ialah tempat perlindunganmu, Yang Mahatinggi telah kaubuat tempat perteduhanmu, <sup>10</sup> malapetaka tidak akan menimpa kamu, dan tulah tidak akan mendekat kepada kemahmu;</p>
+        <p><sup>11</sup> sebab malaikat-malaikat-Nya akan diperintahkan-Nya kepadamu untuk menjaga engkau di segala jalanmu. <sup>12</sup> Mereka akan menatang engkau di atas tangannya, supaya kakimu jangan terantuk kepada batu. <sup>13</sup> Singa dan ular tedung akan kaulangkahi, engkau akan menginjak anak singa dan ular naga.</p>
+        <p><sup>14</sup> "Sungguh, hatinya melekat kepada-Ku, maka Aku akan meluputkannya, Aku akan membentenginya, sebab ia mengenal nama-Ku. <sup>15</sup> Bila ia berseru kepada-Ku, Aku akan menjawab, Aku akan menyertai dia dalam kesesakan, Aku akan meluputkannya dan memuliakannya. <sup>16</sup> Dengan panjang umur akan Kukenyangkan dia, dan akan Kuperlihatkan kepadanya keselamatan dari pada-Ku."</p>
+      </div>
+    `,
+        ref: ""
+      }
+    ];
+
+    const sorted = [...DAYS].sort((a, b) => b.date.localeCompare(a.date));
+    const container = document.getElementById('daysContainer');
+    let currentTheme = 'pagi';
+    let currentTab = 'pagi';
+
+    function renderCards() {
+      container.innerHTML = '';
+
+      if (currentTab === 'mazmur') {
+        const block = document.createElement('div');
+        block.className = 'day';
+        block.innerHTML = `
+      <div class="day-date">
+        <div class="d-title">Mazmur 91</div>
+      </div>
+      <div class="verse-group">
+        ${MAZMUR_91.map(e => verseCardHTML(e, currentTheme)).join('')}
+      </div>
+    `;
+        container.appendChild(block);
+      } else {
+        // HANYA AMBIL HARI INI (Data paling atas)
+        const today = sorted.length > 0 ? sorted[0] : null;
+        if (!today) return;
+        if (!today[currentTab] || today[currentTab].length === 0) return;
+
+        const block = document.createElement('div');
+        block.className = 'day';
+        block.innerHTML = `
+      <div class="day-date">
+        <div class="d-title">${new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</div>
+      </div>
+      <div class="verse-group">
+        ${today[currentTab].map(e => verseCardHTML(e, currentTheme)).join('')}
+      </div>
+    `;
+        container.appendChild(block);
+      }
+
+      // Re-observe new cards for fade-in with a slight delay for better effect
+      const cards = document.querySelectorAll('.verse-card');
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((en, idx) => {
+          if (en.isIntersecting) {
+            setTimeout(() => {
+              en.target.classList.add('in');
+            }, idx * 150); // stagger animation
+            io.unobserve(en.target);
+          }
+        });
+      }, { threshold: 0.1 });
+      cards.forEach(c => io.observe(c));
+    }
+
+    function setTab(tab) {
+      currentTab = tab;
+
+      if (tab === 'pagi' || tab === 'malam') {
+        currentTheme = tab;
+      } else if (tab === 'mazmur') {
+        currentTheme = 'pagi'; // Selalu buat background cerah untuk Mazmur 91
+      }
+
+      // Update buttons
+      document.getElementById('btnPagi').className = `toggle-btn ${tab === 'pagi' ? 'active-pagi' : ''}`;
+      document.getElementById('btnMalam').className = `toggle-btn ${tab === 'malam' ? 'active-malam' : ''}`;
+      const btnMazmur = document.getElementById('btnMazmur');
+      if (btnMazmur) btnMazmur.className = `toggle-btn ${tab === 'mazmur' ? 'active-mazmur' : ''}`;
+
+      // Update body class
+      if (currentTheme === 'malam') {
+        document.body.classList.add('mode-malam');
+        updatePetalsColor('#7C6E9C', '#C2B6C6');
+      } else {
+        document.body.classList.remove('mode-malam');
+        updatePetalsColor('#E8B4B8', '#D9AF8C');
+      }
+
+      // Render cards
+      renderCards();
+    }
+
+    /* ambient floating elements - sparkles, crosses, leaves */
+    const petalGlyphs = ['✦', '✧', '❀', '✞', '✦'];
+    const petals = [];
+    for (let i = 0; i < 15; i++) {
+      const p = document.createElement('div');
+      p.className = 'petal';
+      p.textContent = petalGlyphs[i % petalGlyphs.length];
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.fontSize = (10 + Math.random() * 14) + 'px';
+      p.style.animationDuration = (15 + Math.random() * 20) + 's';
+      p.style.animationDelay = (Math.random() * 10) + 's';
+      document.body.appendChild(p);
+      petals.push(p);
+    }
+
+    function updatePetalsColor(color1, color2) {
+      petals.forEach((p, i) => {
+        p.style.color = i % 2 === 0 ? color1 : color2;
+        p.style.transition = 'color 1s ease';
+      });
+    }
+
+    // Init: Auto-deteksi waktu (Pagi: 05:00-17:59, Malam: 18:00-04:59)
+    const currentHour = new Date().getHours();
+    if (currentHour >= 18 || currentHour < 5) {
+      setTab('malam');
+    } else {
+      setTab('pagi');
+    }
+
+    /* Click Sparkle Effect */
+    const clickSparkles = ['✨', '✦', '🤍', '🌸'];
+    document.addEventListener('click', (e) => {
+      // Prevent spawning on buttons to avoid cluttering interactions
+      if (e.target.tagName === 'BUTTON') return;
+
+      const s = document.createElement('div');
+      s.className = 'click-sparkle';
+      s.style.left = e.clientX + 'px';
+      s.style.top = e.clientY + 'px';
+      s.textContent = clickSparkles[Math.floor(Math.random() * clickSparkles.length)];
+      document.body.appendChild(s);
+
+      setTimeout(() => s.remove(), 800);
+    });
+
+  </script>
+</body>
+
+</html>

@@ -176,12 +176,52 @@
       font-size: 42px;
       color: var(--rose-deep);
       letter-spacing: 1px;
-      margin-bottom: 40px;
+      margin-bottom: 12px;
       transition: color 1s ease;
     }
 
     body.mode-malam .eyebrow {
       color: var(--night-soft);
+    }
+
+    /* Weekly theme badge */
+    .week-theme-wrap {
+      margin-bottom: 40px;
+    }
+
+    .week-theme-label {
+      font-family: 'Quicksand', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--plum-soft);
+      margin-bottom: 8px;
+      transition: color 1s ease;
+    }
+
+    body.mode-malam .week-theme-label {
+      color: var(--dark-text-soft);
+    }
+
+    .week-theme-title {
+      display: inline-block;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-style: italic;
+      font-size: 26px;
+      color: var(--plum);
+      padding: 10px 28px;
+      border-radius: 999px;
+      background: rgba(232, 180, 184, 0.18);
+      box-shadow: inset 0 0 0 1px rgba(201, 123, 132, 0.25);
+      transition: all 1s ease;
+    }
+
+    body.mode-malam .week-theme-title {
+      color: var(--dark-text);
+      background: rgba(124, 110, 156, 0.22);
+      box-shadow: inset 0 0 0 1px rgba(234, 227, 245, 0.2);
     }
 
     /* Toggle Buttons 3D Glassmorphism */
@@ -271,6 +311,21 @@
     .day-date {
       text-align: center;
       margin-bottom: 36px;
+    }
+
+    .d-day-badge {
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--rose-deep);
+      margin-bottom: 10px;
+      transition: color 1s ease;
+    }
+
+    body.mode-malam .d-day-badge {
+      color: var(--rose-soft);
     }
 
     .day-date .d-title {
@@ -549,6 +604,11 @@
         width: 36px;
         height: 36px;
       }
+
+      .week-theme-title {
+        font-size: 21px;
+        padding: 8px 20px;
+      }
     }
 
     /* Click Sparkle Effect */
@@ -592,6 +652,11 @@
       </div>
       <div class="eyebrow">untuk Jane,</div>
 
+      <div class="week-theme-wrap">
+        <div class="week-theme-label">Tema Minggu Ini</div>
+        <div class="week-theme-title" id="weekThemeTitle"></div>
+      </div>
+
       <div class="toggle-wrapper">
         <button id="btnPagi" class="toggle-btn active-pagi" onclick="setTab('pagi')">
           ☀️ Pagi
@@ -614,31 +679,26 @@
 
   <script>
     /* =========================================================
-       ISI AYAT DI SINI
-       Format tetap sama, pagi 2 ayat, malam 2 ayat.
+       ISI TEMA & AYAT DI SINI
+       - WEEK_THEME: judul tema untuk minggu berjalan
+       - DAYS: tiap hari punya "hari" (nomor hari ke-1..7),
+         "tema" (sub-tema hari itu), tanggal, 2 ayat pagi, 2 ayat malam.
+       Urutan tidak masalah, app otomatis ambil tanggal paling akhir.
     ========================================================= */
+    const WEEK_THEME = "Iman dan Pengharapan";
+
     const DAYS = [
       {
-        date: "2026-07-17",
+        date: "2026-07-19",
+        hari: 1,
+        tema: "Iman adalah Dasar Pengharapan",
         pagi: [
-          {
-            verse: "Kita tahu sekarang, bahwa Allah turut bekerja dalam segala sesuatu untuk mendatangkan kebaikan bagi mereka yang mengasihi Dia, yaitu bagi mereka yang terpanggil sesuai dengan rencana Allah.",
-            ref: "Roma 8:28"
-          },
-          {
-            verse: "Segala perkara dapat kutanggung di dalam Dia yang memberi kekuatan kepadaku.",
-            ref: "Filipi 4:13"
-          }
+          { verse: "Iman adalah dasar dari segala sesuatu yang kita harapkan dan bukti dari segala sesuatu yang tidak kita lihat.", ref: "Ibrani 11:1" },
+          { verse: "Semoga Allah, sumber pengharapan, memenuhi kamu dengan segala sukacita dan damai sejahtera dalam iman, sehingga oleh kekuatan Roh Kudus kamu berlimpah-limpah dalam pengharapan.", ref: "Roma 15:13" }
         ],
         malam: [
-          {
-            verse: "Damai sejahtera kutinggalkan bagimu. Damai sejahtera-Ku kuberikan kepadamu, dan Aku tidak memberikannya kepadamu seperti yang diberikan oleh dunia. Janganlah gelisah dan janganlah takut.",
-            ref: "Yohanes 14:27"
-          },
-          {
-            verse: "Serahkanlah segala kekhawatiranmu kepada-Nya, sebab Ia memelihara kamu.",
-            ref: "1 Petrus 5:7"
-          }
+          { verse: "Tetapi orang-orang yang menanti-nantikan TUHAN mendapat kekuatan baru: mereka seumpama rajawali yang naik terbang dengan kekuatan sayapnya; mereka berlari dan tidak menjadi lesu, mereka berjalan dan tidak menjadi lelah.", ref: "Yesaya 40:31" },
+          { verse: "Kita tahu sekarang, bahwa Allah turut bekerja dalam segala sesuatu untuk mendatangkan kebaikan bagi mereka yang mengasihi Dia.", ref: "Roma 8:28" }
         ]
       }
     ];
@@ -714,10 +774,15 @@
         if (!today) return;
         if (!today[currentTab] || today[currentTab].length === 0) return;
 
+        const badgeText = (today.hari && today.tema)
+          ? `Hari ${today.hari} &bull; ${today.tema}`
+          : '';
+
         const block = document.createElement('div');
         block.className = 'day';
         block.innerHTML = `
       <div class="day-date">
+        ${badgeText ? `<div class="d-day-badge">${badgeText}</div>` : ''}
         <div class="d-title">${new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</div>
       </div>
       <div class="verse-group">
@@ -791,6 +856,9 @@
         p.style.transition = 'color 1s ease';
       });
     }
+
+    // Init: judul tema minggu ini
+    document.getElementById('weekThemeTitle').textContent = WEEK_THEME;
 
     // Init: Auto-deteksi waktu (Pagi: 05:00-17:59, Malam: 18:00-04:59)
     const currentHour = new Date().getHours();

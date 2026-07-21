@@ -304,6 +304,214 @@
       box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
     }
 
+    /* ===== Buddy — karakter lucu yang bisa di-drag ===== */
+    .buddy {
+      position: fixed;
+      right: 24px;
+      bottom: 110px;
+      width: 84px;
+      height: 84px;
+      z-index: 50;
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      filter: drop-shadow(0 10px 14px rgba(201, 123, 132, 0.35));
+      animation: buddyFloat 3.2s ease-in-out infinite;
+    }
+
+    body.mode-malam .buddy {
+      filter: drop-shadow(0 10px 14px rgba(0, 0, 0, 0.45));
+    }
+
+    .buddy svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .buddy.dragging {
+      animation: none;
+      cursor: grabbing;
+    }
+
+    .buddy.bounce {
+      animation: buddyBounce 0.5s ease;
+    }
+
+    @keyframes buddyFloat {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(-3deg);
+      }
+
+      50% {
+        transform: translateY(-10px) rotate(3deg);
+      }
+    }
+
+    @keyframes buddyBounce {
+      0% {
+        transform: scale(1, 1);
+      }
+
+      30% {
+        transform: scale(1.18, 0.82);
+      }
+
+      55% {
+        transform: scale(0.88, 1.14);
+      }
+
+      75% {
+        transform: scale(1.05, 0.96);
+      }
+
+      100% {
+        transform: scale(1, 1);
+      }
+    }
+
+    .buddy-body,
+    .buddy-ear {
+      fill: var(--buddy-fill, var(--rose));
+      transition: fill 1s ease;
+    }
+
+    .buddy-ear-inner {
+      fill: var(--buddy-inner, var(--rose-soft));
+      transition: fill 1s ease;
+    }
+
+    .buddy-cheek {
+      fill: var(--rose-deep);
+      opacity: 0.55;
+    }
+
+    .buddy-eye {
+      fill: var(--plum);
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: buddyBlink 4.6s ease-in-out infinite;
+      transition: fill 1s ease;
+    }
+
+    .buddy-mouth {
+      stroke: var(--plum);
+      transition: stroke 1s ease;
+    }
+
+    body.mode-malam .buddy-eye,
+    body.mode-malam .buddy-mouth {
+      fill: var(--dark-text);
+      stroke: var(--dark-text);
+    }
+
+    @keyframes buddyBlink {
+
+      0%,
+      92%,
+      100% {
+        transform: scaleY(1);
+      }
+
+      95% {
+        transform: scaleY(0.1);
+      }
+    }
+
+    /* Ngantuk pas mode malam: mata setengah merem, ngambang lebih pelan */
+    .buddy.sleepy .buddy-eye {
+      animation: none;
+      transform: scaleY(0.45);
+    }
+
+    .buddy.sleepy {
+      animation-duration: 5.5s;
+    }
+
+    /* Tidur kalau didiemin lama: mata merem penuh, Zzz muncul */
+    .buddy.sleeping .buddy-eye {
+      animation: none;
+      transform: scaleY(0.06);
+    }
+
+    .buddy.sleeping {
+      animation-duration: 6.5s;
+    }
+
+    .buddy-zzz {
+      position: absolute;
+      top: -6px;
+      right: -2px;
+      font-family: 'Caveat', cursive;
+      font-weight: 600;
+      font-size: 20px;
+      color: var(--plum-soft);
+      opacity: 0;
+      pointer-events: none;
+      transition: color 1s ease;
+    }
+
+    body.mode-malam .buddy-zzz {
+      color: var(--dark-text-soft);
+    }
+
+    .buddy.sleeping .buddy-zzz {
+      animation: buddyZzz 2.4s ease-in-out infinite;
+    }
+
+    @keyframes buddyZzz {
+      0% {
+        opacity: 0;
+        transform: translate(0, 0) scale(0.7);
+      }
+
+      25% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate(10px, -18px) scale(1.1);
+      }
+    }
+
+    body.mode-malam {
+      --buddy-fill: var(--night);
+      --buddy-inner: var(--night-soft);
+    }
+
+    @media (max-width: 520px) {
+      .buddy {
+        width: 68px;
+        height: 68px;
+        right: 16px;
+        bottom: 90px;
+      }
+    }
+
+    .buddy-trail {
+      position: fixed;
+      pointer-events: none;
+      font-size: 13px;
+      z-index: 49;
+      animation: buddyTrailFade 0.6s ease forwards;
+    }
+
+    @keyframes buddyTrailFade {
+      0% {
+        opacity: 0.8;
+        transform: translate(0, 0) scale(1);
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate(0, 14px) scale(0.4);
+      }
+    }
+
     .day {
       margin-bottom: 72px;
     }
@@ -349,6 +557,7 @@
       display: grid;
       gap: 32px;
       margin-bottom: 44px;
+      perspective: 1200px;
     }
 
     /* Enhanced Card Design */
@@ -364,8 +573,9 @@
       position: relative;
       overflow: hidden;
       opacity: 0;
-      transform: translateY(40px) scale(0.95);
-      transition: all 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform: translateY(30px) scale(0.94) rotateX(-10deg);
+      transform-origin: top center;
+      transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
       text-align: center;
     }
 
@@ -381,7 +591,7 @@
 
     .verse-card.in {
       opacity: 1;
-      transform: translateY(0) scale(1);
+      transform: translateY(0) scale(1) rotateX(0deg);
     }
 
     /* Inner light glow */
@@ -677,6 +887,25 @@
     </footer>
   </div>
 
+  <!-- Karakter lucu, bisa di-drag ke mana aja -->
+  <div class="buddy" id="buddy">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <ellipse class="buddy-ear" cx="34" cy="22" rx="9" ry="16" transform="rotate(-15 34 22)" />
+      <ellipse class="buddy-ear" cx="66" cy="22" rx="9" ry="16" transform="rotate(15 66 22)" />
+      <ellipse class="buddy-ear-inner" cx="34" cy="25" rx="4" ry="9" transform="rotate(-15 34 25)" />
+      <ellipse class="buddy-ear-inner" cx="66" cy="25" rx="4" ry="9" transform="rotate(15 66 25)" />
+      <ellipse class="buddy-body" cx="50" cy="58" rx="34" ry="30" />
+      <ellipse class="buddy-cheek" cx="27" cy="63" rx="6" ry="4" />
+      <ellipse class="buddy-cheek" cx="73" cy="63" rx="6" ry="4" />
+      <g class="buddy-eyes">
+        <ellipse class="buddy-eye" cx="40" cy="55" rx="3.2" ry="4.2" />
+        <ellipse class="buddy-eye" cx="60" cy="55" rx="3.2" ry="4.2" />
+      </g>
+      <path class="buddy-mouth" d="M45 66 Q50 70 55 66" fill="none" stroke-width="2.2" stroke-linecap="round" />
+    </svg>
+    <div class="buddy-zzz">Zzz</div>
+  </div>
+
   <script>
     /* =========================================================
        ISI TEMA & AYAT DI SINI
@@ -870,6 +1099,10 @@
         updatePetalsColor('#E8B4B8', '#D9AF8C');
       }
 
+      // Buddy ngantuk pas tema malam
+      const buddyEl = document.getElementById('buddy');
+      if (buddyEl) buddyEl.classList.toggle('sleepy', currentTheme === 'malam');
+
       // Render cards
       renderCards();
     }
@@ -911,7 +1144,7 @@
     const clickSparkles = ['✨', '✦', '🤍', '🌸'];
     document.addEventListener('click', (e) => {
       // Prevent spawning on buttons to avoid cluttering interactions
-      if (e.target.tagName === 'BUTTON') return;
+      if (e.target.tagName === 'BUTTON' || e.target.closest('#buddy')) return;
 
       const s = document.createElement('div');
       s.className = 'click-sparkle';
@@ -922,6 +1155,123 @@
 
       setTimeout(() => s.remove(), 800);
     });
+
+    /* Buddy — drag, tap, tidur, loncat random, & jejak sparkle */
+    (function initBuddy() {
+      const buddy = document.getElementById('buddy');
+      if (!buddy) return;
+
+      const trailGlyphs = ['✦', '✧', '❀'];
+      const IDLE_MS = 15000; // diemin 15 detik -> tidur
+
+      let isDragging = false;
+      let moved = false;
+      let startX = 0, startY = 0, origLeft = 0, origTop = 0;
+      let lastTrailTime = 0;
+      let idleTimer = null;
+
+      function clamp(val, min, max) {
+        return Math.max(min, Math.min(val, max));
+      }
+
+      function spawnTrail(x, y) {
+        const now = Date.now();
+        if (now - lastTrailTime < 90) return; // throttle
+        lastTrailTime = now;
+
+        const t = document.createElement('div');
+        t.className = 'buddy-trail';
+        t.style.left = (x - 6) + 'px';
+        t.style.top = (y - 6) + 'px';
+        t.textContent = trailGlyphs[Math.floor(Math.random() * trailGlyphs.length)];
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 650);
+      }
+
+      function wakeUp() {
+        buddy.classList.remove('sleeping');
+        resetIdleTimer();
+      }
+
+      function resetIdleTimer() {
+        if (idleTimer) clearTimeout(idleTimer);
+        idleTimer = setTimeout(() => {
+          if (!isDragging) buddy.classList.add('sleeping');
+        }, IDLE_MS);
+      }
+
+      buddy.addEventListener('pointerdown', (e) => {
+        isDragging = true;
+        moved = false;
+        wakeUp();
+        buddy.classList.add('dragging');
+        buddy.setPointerCapture(e.pointerId);
+
+        const rect = buddy.getBoundingClientRect();
+        origLeft = rect.left;
+        origTop = rect.top;
+        startX = e.clientX;
+        startY = e.clientY;
+      });
+
+      buddy.addEventListener('pointermove', (e) => {
+        if (!isDragging) return;
+
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        if (Math.abs(dx) > 4 || Math.abs(dy) > 4) moved = true;
+
+        const maxLeft = window.innerWidth - buddy.offsetWidth;
+        const maxTop = window.innerHeight - buddy.offsetHeight;
+
+        const newLeft = clamp(origLeft + dx, 0, maxLeft);
+        const newTop = clamp(origTop + dy, 0, maxTop);
+
+        buddy.style.left = newLeft + 'px';
+        buddy.style.top = newTop + 'px';
+        buddy.style.right = 'auto';
+        buddy.style.bottom = 'auto';
+
+        if (moved) {
+          const rect = buddy.getBoundingClientRect();
+          spawnTrail(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        }
+      });
+
+      function endDrag() {
+        if (!isDragging) return;
+        isDragging = false;
+        buddy.classList.remove('dragging');
+        resetIdleTimer();
+
+        if (!moved) {
+          buddy.classList.remove('bounce');
+          void buddy.offsetWidth; // reflow biar animasi bisa diulang
+          buddy.classList.add('bounce');
+          setTimeout(() => buddy.classList.remove('bounce'), 500);
+        }
+      }
+
+      buddy.addEventListener('pointerup', endDrag);
+      buddy.addEventListener('pointercancel', endDrag);
+
+      // Loncat random sesekali, selama nggak lagi di-drag atau tidur
+      function scheduleRandomHop() {
+        const delay = 8000 + Math.random() * 12000; // 8-20 detik
+        setTimeout(() => {
+          if (!isDragging && !buddy.classList.contains('sleeping')) {
+            buddy.classList.remove('bounce');
+            void buddy.offsetWidth;
+            buddy.classList.add('bounce');
+            setTimeout(() => buddy.classList.remove('bounce'), 500);
+          }
+          scheduleRandomHop();
+        }, delay);
+      }
+
+      resetIdleTimer();
+      scheduleRandomHop();
+    })();
 
   </script>
 </body>
